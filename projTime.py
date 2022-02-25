@@ -29,7 +29,7 @@ print("Projected Time version: {0}".format(version))
 win = GraphWin("Projected Time {0}".format(version), width = 500, height = 500) # create a window
 win.setCoords(-100, -100, 100, 100) # set the coordinates of the window; bottom left is (-100, -100) and top right is (100, 100)
 
-image = Image(Point(0,5),"TestPic2.gif")
+image = Image(Point(0,5),"TestPic1.gif")
 image.draw(win)
 
 box1 = Entry(Point(25,0),20) # time

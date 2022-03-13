@@ -1,0 +1,38 @@
+myGitHub - https://github.com/22127011/ProjectE448.git
+
+Excel Project tracker template is perfect.
+
+http://socialledge.com/sjsu/index.php/S20:_Tesla_Model_RC 
+
+https://www.youtube.com/watch?v=4Y7zG48uHRo&list=TLPQMTcwMjIwMjIshCGnwxcnOQ&index=3 : Maths, navigation
+
+https://www.sisense.com/blog/latitude-longitude-distance-calculation-explained/
+
+https://www.movable-type.co.uk/scripts/latlong.html : lat long equations
+
+https://github.com/PatrickSuhm/SelfDrivingGPSRobot : great arduino code GPS autonomous model
+
+Closed chrome links:
+https://ieeexplore.ieee.org/document/7995816 
+https://zhengludwig.wordpress.com/projects/self-driving-rc-car/
+https://ieeexplore-ieee-org.ez.sun.ac.za/document/6594920
+
+Matlab:
+https://www.mathworks.com/help/matlabmobile_android/ref/poslog.html#:~:text=Get%20Logged%20Position%20Data%20from%20Android%20Sensor,-This%20example%20assumes&text=Start%20MATLAB%20Mobile%20on%20your,Mobile%2C%20tap%20the%20Position%20sensor.&text=This%20action%20starts%20the%20transmitting,MATLAB%20Mobile%20on%20the%20device. 
+https://www.mathworks.com/help/map/ref/gpxread.html
+https://www.mathworks.com/help/driving/ref/geoplayer.html
+https://www.mathworks.com/help/matlab/ref/geoplot.html
+https://www.mathworks.com/help/map/ref/wmline.html
+https://www.mathworks.com/help/matlab/ref/compass.html
+https://www.mathworks.com/help/matlab/ref/double.cat.html
+https://www.mathworks.com/videos/path-planning-and-navigation-for-autonomous-robots-1509457228757.html
+https://www.mathworks.com/help/robotics/ref/ratecontrol.html
+https://www.mathworks.com/help/robotics/ug/path-following-for-differential-drive-robot.html : 1
+https://www.mathworks.com/help/robotics/ref/ackermannkinematics.derivative.html : 2
+https://www.mathworks.com/help/robotics/ug/path-planning-in-environments-of-difference-complexity.html  : 3
+
+
+
+
+
+

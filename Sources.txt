@@ -30,6 +30,7 @@ https://www.mathworks.com/help/robotics/ref/ratecontrol.html
 https://www.mathworks.com/help/robotics/ug/path-following-for-differential-drive-robot.html : 1
 https://www.mathworks.com/help/robotics/ref/ackermannkinematics.derivative.html : 2
 https://www.mathworks.com/help/robotics/ug/path-planning-in-environments-of-difference-complexity.html  : 3
+https://www.mathworks.com/help/robotics/ug/pure-pursuit-controller.html
 
 
 

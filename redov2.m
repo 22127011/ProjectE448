@@ -1,4 +1,4 @@
-%% Speed control with elevation change
+%% Speed control with functions
 
 load('set12el.mat'); % loads matlab sensor data
 lat = Position.latitude;

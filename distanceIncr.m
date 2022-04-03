@@ -1,3 +1,4 @@
+% for flat route
 function [df, avgspeed] = distanceIncr(x,lat,long,size)
     R = 6371000;
     df = zeros(1);
@@ -18,5 +19,5 @@ function [df, avgspeed] = distanceIncr(x,lat,long,size)
     end 
 
     avgspeed = df(size)/x; % speed in meters per second. df(size) = total distance.
-    speedinminpkm = 1/(avgspeed*0.06); % speed in minutes per km
+    % speedinminpkm = 1/(avgspeed*0.06); % speed in minutes per km
 end

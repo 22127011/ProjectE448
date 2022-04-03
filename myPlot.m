@@ -6,14 +6,17 @@ function myPlot(df,x,lat,long,st,dist,size)
     sampleTime = rateControl(st); % 1 second sampling rate to represent real world
     i = 1;
     k = 1;
-    while(i<=x-1) 
+    j = 1;
+    while(i<=x-1 && j<=size-1) 
+         % plotPosition(player,lat(j),long(j),"TrackID",2,"Marker","+","Label","Thato");
+         % j =j + 1;
         if dist(i) <= df(k)
             i = i + 1;
             plotPosition(player,lat(k),long(k),"TrackID",1,"Marker","*","Label","AI");
             if i>1
                 speed = dist(i) - dist(i-1)
             end
-            distance = dist(i)
+            distance = df(k)
             TimeElasped = sampleTime.TotalElapsedTime % the one in if 
             waitfor(sampleTime); % wait for 1 second
             % maybe also spit out coordinates at this time instance 
@@ -24,9 +27,9 @@ function myPlot(df,x,lat,long,st,dist,size)
                                                     % remove the one in if 
     end
     plotPosition(player,lat(size),long(size),"TrackID",1,"Marker","*","Label","AI");
-    speed = speed
+    % speed = speed
     distance = df(size) 
-    completionTime = int8(sampleTime.TotalElapsedTime)
+    completionTime = round(sampleTime.TotalElapsedTime)
     % hides route -> reset(player); 
     % hide(player); % closes visualizer
 end

@@ -6,10 +6,8 @@ function myPlot(df,x,lat,long,st,dist,size)
     sampleTime = rateControl(st); % 1 second sampling rate to represent real world
     i = 1;
     k = 1;
-    j = 1;
-    while(i<=x-1 && j<=size-1) 
-         % plotPosition(player,lat(j),long(j),"TrackID",2,"Marker","+","Label","Thato");
-         % j =j + 1;
+    while(i<=x-1) 
+        plotPosition(player,lat(i),long(i),"TrackID",2,"Marker","+","Label","Thato");
         if dist(i) <= df(k)
             i = i + 1;
             plotPosition(player,lat(k),long(k),"TrackID",1,"Marker","*","Label","AI");

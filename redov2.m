@@ -2,13 +2,13 @@
 
 % x = 64-68 doesnt work for set12
 
-load('set12el.mat'); % loads matlab sensor data
+load('matlabflat.mat'); % loads matlab sensor data
 lat = Position.latitude;
 long = Position.longitude; 
 alt = Position.altitude;
 size = length(lat);
 fpc = 15; % frequency of pace change in seconds.
-rtimeflat = 244; % completion time in x seconds. Modified by user
+rtimeflat = 20; % completion time in x seconds. Modified by user
 x = rtimeflat;
 
 nww = segmentTimes(x,alt,fpc);
@@ -77,7 +77,7 @@ while(i<=sizemax)
             if k>i 
                 'You are behind'
             end
-            waitfor(sampleTime); % wait for 1 second
+            % waitfor(sampleTime); % wait for 1 second
         else
             k = k + 1; % final time is almost x; this line takes 0.3 ms to execute
         end

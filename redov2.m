@@ -1,4 +1,4 @@
-%% Speed control (with elevation change) with functions and 
+%% Speed control (with elevation change) with functions
 
 % x = 64-68 doesnt work for set12
 
@@ -8,7 +8,7 @@ long = Position.longitude;
 alt = Position.altitude;
 size = length(lat);
 fpc = 15; % frequency of pace change in seconds.
-rtimeflat = 28; % completion time in x seconds. Modified by user
+rtimeflat = 244; % completion time in x seconds. Modified by user
 x = rtimeflat;
 
 nww = segmentTimes(x,alt,fpc);
@@ -49,8 +49,21 @@ i = 1;
 k = 1;
 results = [];
 speed = {};
-while(i<=size) 
-    plotPosition(player,lat(i),long(i),"TrackID",2,"Marker","+","Label","Thato");
+
+% choose array with longer time (to avoid index array bounds)
+% robot or human will continue running if the other has already reached the end of the route
+size2 = length(dist);
+if size>size2
+    sizemax = size;
+else
+    sizemax = size2;
+end
+
+while(i<=sizemax) 
+    if i<=size
+        plotPosition(player,lat(i),long(i),"TrackID",2,"Marker","+","Label","Thato");
+    end
+
     if i<=x-1
         if dist(i) <= df(k)
             i = i + 1;
@@ -81,10 +94,10 @@ while(i<=size)
         results = cat(1,results, [lat(size) long(size)]);
         'Run must have been completed already'
         completionTime = round(sampleTime.TotalElapsedTime);
-        completionTime = completionTime + st
+        completionTime = completionTime + st % 1 second lost from (if i<=x-1)
     end
 end
-
-plotResults(results,x,speed,size,alt);
 % hides route -> reset(player); 
 % hide(player); % closes visualizer
+
+plotResults(results,x,speed,size,alt);

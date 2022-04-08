@@ -1,28 +1,41 @@
 %% Speed control (with elevation change) with functions and 
 
+% x = 64-68 doesnt work for set12
+
 load('set12el.mat'); % loads matlab sensor data
 lat = Position.latitude;
 long = Position.longitude; 
 alt = Position.altitude;
 size = length(lat);
 fpc = 15; % frequency of pace change in seconds.
-rtimeflat = 25; % completion time in x seconds. Modified by user
+rtimeflat = 28; % completion time in x seconds. Modified by user
 x = rtimeflat;
 
 nww = segmentTimes(x,alt,fpc);
 % nww = [0,10,20,10];
 
 % [df,avgspeed] = distanceIncr2(x,lat,long,size); % flat
-[df, avgspeed] = distanceIncr2(x,lat,long,size,fpc,nww); % not flat
-
+[df, avgspeed, distance_on_segment] = distanceIncr2(x,lat,long,size,fpc,nww); % not flat
 
 % Distance for every second
 % dist = distf(x,avgspeed);
-dist = diste(df,nww,x,fpc,size);
+% dist = diste(df,nww,x,fpc,size); gives right time but no speed change
+dist = diste2(df,nww,x,fpc,size,avgspeed);
+dist_store = dist;
 ratio = df(size)/dist(length(dist));
-dist = ratio*dist;
-avgspeed = ratio*avgspeed;
+dist = ratio*dist; % representation of data in real world
+% avgspeed = ratio*avgspeed;
 
+err_allowed = ceil(length(avgspeed)*0.02); % 2% error margin. For bad data.
+for i = 1:length(avgspeed)
+    if avgspeed(i)>7.2 % 1 mile record pace
+        if err_allowed==0 
+            warning('Impossible running time attempt. But GO for it CHAMP!!!')
+            break;
+        end
+        err_allowed = err_allowed - 1;
+    end
+end
 
 % plot 
 % myPlot(df,x,lat,long,1,dist,size);
@@ -34,40 +47,59 @@ plotRoute(player,lat,long);
 sampleTime = rateControl(st); % 1 second sampling rate to represent real world
 i = 1;
 k = 1;
+results = [];
+speed = {};
 while(i<=size) 
     plotPosition(player,lat(i),long(i),"TrackID",2,"Marker","+","Label","Thato");
     if i<=x-1
         if dist(i) <= df(k)
             i = i + 1;
-            plotPosition(player,lat(k),long(k),"TrackID",1,"Marker","*","Label","AI");
+            results = cat(1,results, [lat(k) long(k)]); % coordinates at this time instance 
+            plotPosition(player,lat(k),long(k),"TrackID",1,"Marker","*","Label","Robot");
             if i>1
-                speed = dist(i) - dist(i-1)
+                speed{i} = dist_store(i) - dist_store(i-1);
             end
-            distance = df(k)
+            distanceRan = df(k)
             TimeElasped = sampleTime.TotalElapsedTime % the one in if 
+            if k>i 
+                'You are behind'
+            end
             waitfor(sampleTime); % wait for 1 second
-            % maybe also spit out coordinates at this time instance 
         else
-            k = k + 1; % final tme is almost x; this line takes 0.3 ms to execute
+            k = k + 1; % final time is almost x; this line takes 0.3 ms to execute
         end
         % TimeElasped = sampleTime.TotalElapsedTime % prints twice to show the 0.3 ms gap
                                                     % remove the one in if 
     else 
         i = i + 1;
-        plotPosition(player,lat(size),long(size),"TrackID",1,"Marker","*","Label","AI");
-        waitfor(sampleTime);
+        plotPosition(player,lat(size),long(size),"TrackID",1,"Marker","*","Label","Robot");
+        % waitfor(sampleTime); % turn this on
     end
 
     if i==x
-        % plotPosition(player,lat(size),long(size),"TrackID",1,"Marker","*","Label","AI");
+        plotPosition(player,lat(size),long(size),"TrackID",1,"Marker","*","Label","Robot");
+        results = cat(1,results, [lat(size) long(size)]);
+        'Run must have been completed already'
         completionTime = round(sampleTime.TotalElapsedTime);
-    end
-
-    if k>i 
-        'You are behind'
+        completionTime = completionTime + st
     end
 end
-completionTime = completionTime
-    
+
+plot(results(:,1),results(:,2));
+label = {};
+for i = 1:x
+    label{i} = 'Time: ' + string(i) + 's, ' + 'Speed: ' + string(speed{i});
+end
+text(results(:,1),results(:,2),label,'VerticalAlignment','bottom','HorizontalAlignment','left');
+title('Latitude and Longitude coordinates for each time instance and speed');
+xlabel('Longitude');
+ylabel('Latitude');
+
+figure
+plot(1:size,alt);
+title('Altitude data');
+xlabel('Coordinate #');
+ylabel('Altitude');
+
 % hides route -> reset(player); 
 % hide(player); % closes visualizer

@@ -33,6 +33,8 @@ https://www.mathworks.com/help/robotics/ug/path-following-for-differential-drive
 https://www.mathworks.com/help/robotics/ref/ackermannkinematics.derivative.html : 2
 https://www.mathworks.com/help/robotics/ug/path-planning-in-environments-of-difference-complexity.html  : 3
 https://www.mathworks.com/help/robotics/ug/pure-pursuit-controller.html
+https://www.mathworks.com/help/matlab/ref/try.html
+https://www.mathworks.com/help/matlab/ref/text.html#d123e1481030
 
 
 Nothing

@@ -1,11 +1,12 @@
 % for route with elevation
-function [df, avgspeed] = distanceIncr2(x,lat,long,size,fpc,nww)
+function [df, avgspeed, distancec] = distanceIncr2(x,lat,long,size,fpc,nww)
     R = 6371000;
     step = 1;
     counter = 1;
-    divisor = size/fpc; 
+    divisor = size/fpc
     df = zeros(1);
     avgspeed = [];
+    distancec = [];
     for i=2:1:size
         a11 = (lat(i)-lat(i-1))*pi/180;
         a41 = (long(i)-long(i-1))*pi/180;
@@ -21,8 +22,11 @@ function [df, avgspeed] = distanceIncr2(x,lat,long,size,fpc,nww)
     
         df = cat(1, df, df(i-1) + d) ; % in meters
 
-        if mod(i,size/divisor)==0
-           avgspeed = cat(1,avgspeed,(df(i)-df(step))/nww(counter));
+        if mod(i,fpc)==0
+           avgspeed = cat(1,avgspeed,(df(i-1)-df(step))/nww(counter));
+           % avgspeed = cat(1,avgspeed,(59)/nww(counter)); % assuming equal segment distances
+                                                           % shows algorithm works (perfect data input)
+           distancec = cat(1,distancec,df(i-1)-df(step));
            step = i-1; % the end point (index) of recorded elevation
            counter = counter + 1;
         end

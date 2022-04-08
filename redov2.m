@@ -14,7 +14,6 @@ x = rtimeflat;
 nww = segmentTimes(x,alt,fpc);
 % nww = [0,10,20,10];
 
-% [df,avgspeed] = distanceIncr2(x,lat,long,size); % flat
 [df, avgspeed, distance_on_segment] = distanceIncr2(x,lat,long,size,fpc,nww); % not flat
 
 % Distance for every second

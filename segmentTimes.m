@@ -1,31 +1,28 @@
-function newtimeel = segmentTimes(x, alt, fpc) 
-    sizeof = length(alt);
+function newspeed = segmentTimes(avgspeed, alt, fpc, dps, tdt) 
+    size = length(alt);
     elevation = [];
-    counter = 1;
     step = 1;
-    while(counter<=sizeof)
-      if mod(counter,fpc)==0
-        elevation = cat(1,elevation,alt(counter,1)-alt(step,1));
-        step = counter; % the end point (index) of recorded elevation
+    for i = 1:1:size+1
+      if mod(i,fpc)==0
+        elevation = cat(1,elevation,alt(i,1)-alt(step,1));
+        step = i; % the end point (index) of recorded elevation
       end
-      counter = counter + 1;
     end
     
-    newtimeel = [];
-    rtimeflatd = x/length(elevation);
+    newspeed = [];
     televation = sum(elevation,'all'); % total elevation
     if televation==0
         for i=1:length(elevation)
-            newtimeel(i) = rtimeflatd;
+            newspeed(i) = avgspeed;
         end
     else
         elevation = elevation/televation; % gets the % elevation contribution of each segment
-        elevation = rtimeflatd*(1+elevation); % assigns time spent on each segment
-        newtimeel = sum(elevation,'all'); % total new completion time
-        ratio = x/newtimeel; % ratio (expansion or compression of rtimeflat)
-        newtimeel = ratio*elevation; % adjusted time spent on each segment
-        newtimeel = cat(1,newtimeel,newtimeel(length(newtimeel))); % solves edge case. df dist mismatch
+        elevation = avgspeed*(1-elevation); % assigns speed each segment
+        newspeed = tdt/new_completion_time(dps, elevation); % new average speed
+        ratio = avgspeed/newspeed; % ratio (expansion or compression of average speed)
+        newspeed = ratio*elevation; % adjusted average speed for each segment
+        newspeed = cat(1,newspeed,newspeed(length(newspeed))); % solves edge case. df dist mismatch
     end
 
-    % newtimeel = cat(1,newtimeel,newtimeel(length(newtimeel))); % solves edge case. df dist mismatch
+    % newspeed = cat(1,newspeed,newspeed(length(newspeed))); % solves edge case. df dist mismatch
 end      

@@ -1,7 +1,9 @@
 % for route with elevation
-function [df, avgspeed, dist] = distanceIncr3(x,lat,long,size)
+function [df, avgspeed, distance_per_segment] = distanceIncr3(x,lat,long,size,fpc)
     R = 6371000;
     % divisor = size/fpc
+    step = 1;
+    distance_per_segment = [];
     df = zeros(1);
     distancec = zeros(1);
     for i=2:1:size
@@ -18,12 +20,17 @@ function [df, avgspeed, dist] = distanceIncr3(x,lat,long,size)
         d = R * c ; % in meters
     
         df = cat(1, df, df(i-1) + d) ; % in meters
+
+        if mod(i,fpc)==0
+           distance_per_segment = cat(1,distance_per_segment,df(i)-df(step));
+           step = i; % the end point (index) of recorded elevation
+        end
     end
         
     for i=2:1:x+1
         distancec = cat(1,distancec,distancec(i-1)+df(size)/x);
     end
     
-    dist = distancec;
-    avgspeed = df(size)/x;
+    % dist = distancec;
+    avgspeed = df(size)/x; % average speed for the whole route
 end

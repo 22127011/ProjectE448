@@ -17,6 +17,4 @@ function dist = diste2(x,speed_per_segment,distance_per_segment,df, size)
     end
     ratio = df(size)/dist(length(dist));
     dist = ratio*dist;
-    % ratio = df(size)/dist(length(dist));
-    % dist = ratio*dist;
 end

@@ -1,5 +1,5 @@
 % for route with elevation
-function [df, avgspeed, distance_per_segment] = distanceIncr3(x,lat,long,size,fpc)
+function [df, distance_per_segment] = distanceIncr3(x,lat,long,size,fpc)
     R = 6371000;
     % divisor = size/fpc
     step = 1;
@@ -30,7 +30,4 @@ function [df, avgspeed, distance_per_segment] = distanceIncr3(x,lat,long,size,fp
     for i=2:1:x+1
         distancec = cat(1,distancec,distancec(i-1)+df(size)/x);
     end
-    
-    % dist = distancec;
-    avgspeed = df(size)/x; % average speed for the whole route
 end

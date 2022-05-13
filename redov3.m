@@ -1,16 +1,28 @@
 %% Speed control (with elevation change) with functions
 
-% x = 64-68 doesnt work for set12
-
-load('set16el.mat'); % loads matlab sensor data
-lat = Position.latitude;
-long = Position.longitude; 
+load('matlabflat.mat'); % loads matlab sensor data
+oldlat = Position.latitude;
+oldlong = Position.longitude; 
 alt = Position.altitude;
-size = length(lat);
-fpc = 15; % frequency of pace change in seconds.
-x = 65; % completion time in x seconds. Modified by user
+course = Position.course;
+size = length(oldlat);
+fpc = 15; % frequency of pace change.
+x = 180; % completion time in x seconds. Modified by user
+play = true;
 
-[df, avgspeed, distance_per_segment] = distanceIncr3(x,lat,long,size,fpc); % not flat
+%{
+[df1 nll, NewSize] = distanceIncr(lat,long,alt,course,oldsize);
+avgspeed = df1(oldsize)/x;
+oldlat = nll(:,1);
+oldlong = nll(:,2);
+alt = nll(:,3);
+size = NewSize;
+%}
+
+[df, distance_per_segment] = distanceIncr3(x,oldlat,oldlong,size,fpc); % not flat
+%df = df*df1(oldsize)/df(size);
+%distance_per_segment = distance_per_segment*df1(oldsize)/df(size);
+avgspeed = df(size)/x;
 speed_per_segment = segmentTimes(avgspeed, alt, fpc, distance_per_segment,df(size));
 
 dist = diste2(x,speed_per_segment,distance_per_segment,df,size);
@@ -24,16 +36,18 @@ end
 % plot 
 % myPlot(df,x,lat,long,1,dist,size);
 st = 1; 
-player = geoplayer(lat(1),long(1),18);
+player = geoplayer(oldlat(1),oldlong(1),18);
 player.Parent.Name = 'Runner vs robot';
-player.Basemap = 'streets'; % 'darkwater', 'grayland', 'bluegreen', 'grayterrain', 'colorterrain', 'landcover', 'streets', 'streets-light', 'streets-dark', 'satellite', 'topographic', 'none'
-plotRoute(player,lat,long);
+player.Basemap = 'streets'; 
+plotRoute(player,oldlat,oldlong,"Color","cyan");
 sampleTime = rateControl(st); % 1 second sampling rate to represent real world
 i = 1;
 k = 1;
 results = [];
+dfr = zeros(1);
 speed = {};
 new_alt = [];
+time = 0;
 
 % choose array with longer time (to avoid index array bounds)
 % robot or human will continue running if the other has already reached the end of the route
@@ -46,19 +60,21 @@ end
 
 step = 1;
 distance_to_travel = distance_per_segment(step);
-while(i<=sizemax) 
-    if i<=size
-        plotPosition(player,lat(i),long(i),"TrackID",2,"Marker","+","Label","Thato");
+while(i<=x && play==true)
+    if i<size
+        plotPosition(player,oldlat(i),oldlong(i),"TrackID",1,"Marker","+","Label","Dummy");
     end
 
     if i<=x-1
         if dist(i) <= df(k)
-            new_alt = cat(1, new_alt, alt(i*floor(size/x)));
+            if i<=size
+                new_alt = cat(1, new_alt, alt(k));
+            end
             i = i + 1;
-            results = cat(1,results, [lat(k) long(k)]); % coordinates at this time instance 
-            plotPosition(player,lat(k),long(k),"TrackID",1,"Marker","*","Label","Robot");
-
-            if dist(i-1) >= distance_to_travel 
+            results = cat(1,results, [oldlat(k) oldlong(k)]); % coordinates at this time instance 
+            plotPosition(player,oldlat(k),oldlong(k),"TrackID",i,"Marker","*");
+            
+            if dist(i) >= distance_to_travel 
                 distance_to_travel = distance_to_travel + distance_per_segment(step);
                 step = step + 1; % possibly must come before previous line
             end
@@ -68,8 +84,11 @@ while(i<=sizemax)
             current_speed = speed_per_segment(step)
             distanceRan = dist(i)
             TimeElasped = sampleTime.TotalElapsedTime % the one in if 
+            time = time + 1
             if k>i 
-                'You are behind'
+                status = 'You are behind'
+            else 
+                status = 'You are on pace or ahead'
             end
             % waitfor(sampleTime); % wait for 1 second
         else
@@ -79,19 +98,19 @@ while(i<=sizemax)
                                                     % remove the one in if 
     else 
         i = i + 1;
-        plotPosition(player,lat(size),long(size),"TrackID",1,"Marker","*","Label","Robot");
+        plotPosition(player,oldlat(size),oldlong(size),"TrackID",i,"Marker","*","Label","RobotDone");
         % waitfor(sampleTime); % turn this on
     end
 
     if i==x
         new_alt = cat(1, new_alt, alt(size));
-        results = cat(1,results, [lat(size) long(size)]);
-        plotPosition(player,lat(size),long(size),"TrackID",1,"Marker","*","Label","Robot");
+        results = cat(1,results, [oldlat(size) oldlong(size)]);
+        plotPosition(player,oldlat(size),oldlong(size),"TrackID",i,"Marker","*","Label","RobotDone");
         speed{i} = speed_per_segment(step);
         current_speed = speed_per_segment(step)
         distanceRan = df(size)
         TimeElasped = sampleTime.TotalElapsedTime
-        'Run must have been completed already'
+        status = 'Run must have been completed already'
         completionTime = round(sampleTime.TotalElapsedTime);
         completionTime = completionTime + st % 1 second lost from (if i<=x-1)
     end
@@ -99,4 +118,8 @@ end
 % hides route -> reset(player); 
 % hide(player); % closes visualizer
 
-plotResults(results,x,speed,size,alt,new_alt,dist);
+if play==true
+    plotResults(results,x,speed,avgspeed,alt,new_alt,dist,df);
+else 
+    plotResultsf(x,size,alt,dist);
+end

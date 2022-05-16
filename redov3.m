@@ -1,18 +1,17 @@
 %% Speed control (with elevation change) with functions
 
-load('matlabflat.mat'); % loads matlab sensor data
+load('matlab.mat'); % loads matlab sensor data
 oldlat = Position.latitude;
 oldlong = Position.longitude; 
 alt = Position.altitude;
 course = Position.course;
 size = length(oldlat);
 fpc = 15; % frequency of pace change.
-x = 180; % completion time in x seconds. Modified by user
+x = 59; % completion time in x seconds. Modified by user
 play = true;
 
 %{
-[df1 nll, NewSize] = distanceIncr(lat,long,alt,course,oldsize);
-avgspeed = df1(oldsize)/x;
+[df1 nll NewSize] = distanceIncr(oldlat,oldlong,alt,course,size);
 oldlat = nll(:,1);
 oldlong = nll(:,2);
 alt = nll(:,3);
@@ -60,7 +59,7 @@ end
 
 step = 1;
 distance_to_travel = distance_per_segment(step);
-while(i<=x && play==true)
+while(i<=sizemax && play==true)
     if i<size
         plotPosition(player,oldlat(i),oldlong(i),"TrackID",1,"Marker","+","Label","Dummy");
     end

@@ -1,4 +1,6 @@
 % for flat route
+% change to show usage of new bearing calc and from last calc latlong to
+% next recorded one to show small angel theory and match report
 function [df, NewLatLongAlt, NewSize] = distanceIncr(lat,long,alt,course,size)
     R = 6371000;
     df = zeros(1);

@@ -36,7 +36,6 @@ https://www.mathworks.com/help/robotics/ug/pure-pursuit-controller.html
 https://www.mathworks.com/help/matlab/ref/try.html
 https://www.mathworks.com/help/matlab/ref/text.html#d123e1481030
 
-
 Nothing
 
 

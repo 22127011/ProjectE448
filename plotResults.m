@@ -1,27 +1,56 @@
 function plotResults(results,x,speed,avgspeed,alt,new_alt,dist,df)
+    %{
     scatter( results(:,1) , results(:,2) , [] , linspace(results(1,2),results(length(results(:,2)),2),x) ,"filled" )
     label = {};
     for i = 1:x
         % label{i} = 'Time: ' + string(i) + 's, ' + 'Speed: ' + string(speed{i});
-        label{i} = i;
+        label{i} = i-1;
+    end
+    text(results(:,1),results(:,2),label,'VerticalAlignment','baseline','HorizontalAlignment','left');
+    title('Latitude and Longitude coordinates for each time instance');
+    xlabel('Longitude');
+    ylabel('Latitude');
+    %}
+
+    fileID = fopen('robot.txt','w');
+    fprintf(fileID,'%3.7f,%3.7f\n',[results(:,1) results(:,2)]);
+    fclose(fileID);
+    
+    figure
+    label = {};
+    for i = 1:x
+        label{i} = i-1;
+        if (i>=length(df))
+            df = cat(1,df,df(length(df)));
+        end
+        if (i>=length(dist))
+            dist = cat(1,dist,dist(length(dist)));
+        end
+
+        if (dist(i)<df(i))
+            c = 'green';
+        elseif (dist(i)==df(i))
+            c = 'yellow';  
+        else 
+            c = 'red';
+        end
+        scatter( results(i,1) , results(i,2),c,"filled" )
+        hold on;
     end
     text(results(:,1),results(:,2),label,'VerticalAlignment','bottom','HorizontalAlignment','left');
     title('Latitude and Longitude coordinates for each time instance');
     xlabel('Longitude');
     ylabel('Latitude');
-    
+    % legend('behind', 'ahead', 'on pace');
+    hold off;
 
-    fileID = fopen('Robot.txt','w');
-    fprintf(fileID,'%3.7f,%3.7f\n',[results(:,1) results(:,2)]);
-    fclose(fileID);
-    
     figure
     plot(1:length(new_alt),new_alt) % Robot
     title('Altitude vs Time');
     xlabel('Time');
     ylabel('Altitude');
     hold on
-    plot(1:length(new_alt),alt(1:length(new_alt))); % Runner
+    plot(1:length(alt),alt(1:length(alt))); % Runner
     hold off
     legend('Robot','Dummy Runner')
 

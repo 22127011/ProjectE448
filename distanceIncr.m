@@ -8,7 +8,7 @@ function [df, NewLatLongAlt, NewSize] = distanceIncr(lat,long,alt,course,size)
     NewLatLongAlt = [lat(1) long(1) alt(1)];
     lat1 = lat(1)*pi/180;
     long1 = long(1)*pi/180;
-    d_move = 2;
+    d_move = 1;
 
     for i=2:1:size
         latim1temp = lat(i-1);

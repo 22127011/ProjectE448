@@ -1,29 +1,31 @@
 %% Speed control (with elevation change) with functions
 
-load('matlab.mat'); % loads matlab sensor data
+load('set12el.mat'); % loads matlab sensor data
 oldlat = Position.latitude;
 oldlong = Position.longitude; 
 alt = Position.altitude;
 course = Position.course;
 size = length(oldlat);
 fpc = 15; % frequency of pace change.
-x = 59; % completion time in x seconds. Modified by user
+x = 232; % completion time in x seconds. Modified by user
 play = true;
 
 %{
-[df1 nll NewSize] = distanceIncr(oldlat,oldlong,alt,course,size);
+[df1, nll, NewSize] = distanceIncr(oldlat,oldlong,alt,course,size);
 oldlat = nll(:,1);
 oldlong = nll(:,2);
 alt = nll(:,3);
+oldsize = size;
 size = NewSize;
-%}
+%} 
+% causes timing issues. runner avgspeed calc wrong 
 
 [df, distance_per_segment] = distanceIncr3(x,oldlat,oldlong,size,fpc); % not flat
-%df = df*df1(oldsize)/df(size);
-%distance_per_segment = distance_per_segment*df1(oldsize)/df(size);
+% df = df*df1(oldsize)/df(size);
+% distance_per_segment = distance_per_segment*df1(oldsize)/df(size);
+
 avgspeed = df(size)/x;
 speed_per_segment = segmentTimes(avgspeed, alt, fpc, distance_per_segment,df(size));
-
 dist = diste2(x,speed_per_segment,distance_per_segment,df,size);
 
 try 

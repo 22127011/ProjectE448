@@ -17,9 +17,9 @@ function plotResults(results,x,speed,avgspeed,alt,new_alt,dist,df)
     fclose(fileID);
     
     figure
-    label = {};
+    %label = {};
     for i = 1:x
-        label{i} = i-1;
+        % label{i} = i-1;
         if (i>=length(df))
             df = cat(1,df,df(length(df)));
         end
@@ -27,9 +27,9 @@ function plotResults(results,x,speed,avgspeed,alt,new_alt,dist,df)
             dist = cat(1,dist,dist(length(dist)));
         end
 
-        if (dist(i)<df(i))
+        if ((df(i)-dist(i))>1) % 0.2 being the resolution
             c = 'green';
-        elseif (dist(i)==df(i))
+        elseif ((df(i)-dist(i))>-1 && (df(i)-dist(i))<1)
             c = 'yellow';  
         else 
             c = 'red';
@@ -37,7 +37,7 @@ function plotResults(results,x,speed,avgspeed,alt,new_alt,dist,df)
         scatter( results(i,1) , results(i,2),c,"filled" )
         hold on;
     end
-    text(results(:,1),results(:,2),label,'VerticalAlignment','bottom','HorizontalAlignment','left');
+    %text(results(:,1),results(:,2),label,'VerticalAlignment','bottom','HorizontalAlignment','left');
     title('Latitude and Longitude coordinates for each time instance');
     xlabel('Longitude');
     ylabel('Latitude');

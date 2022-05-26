@@ -13,8 +13,10 @@ function plotResults(results,x,speed,avgspeed,alt,new_alt,dist,df)
     %}
 
     fileID = fopen('robot.txt','w');
-    fprintf(fileID,'%3.7f,%3.7f\n',[results(:,1) results(:,2)]);
+    fprintf(fileID,'%3.7f,%3.7f\n',[transpose(results(:,1)) ; transpose(results(:,2))]);
     fclose(fileID);
+
+    s = cell2mat(speed);
     
     figure
     %label = {};
@@ -27,10 +29,11 @@ function plotResults(results,x,speed,avgspeed,alt,new_alt,dist,df)
             dist = cat(1,dist,dist(length(dist)));
         end
 
-        if ((df(i)-dist(i))>1) % 0.2 being the resolution
+        
+        if ((df(i)-dist(i))>=-(s(i)) && (df(i)-dist(i))<=(s(i)))
+            c = 'yellow'; 
+        elseif ((df(i)-dist(i))>(s(i))) % 1 being the resolution
             c = 'green';
-        elseif ((df(i)-dist(i))>-1 && (df(i)-dist(i))<1)
-            c = 'yellow';  
         else 
             c = 'red';
         end
@@ -65,7 +68,7 @@ function plotResults(results,x,speed,avgspeed,alt,new_alt,dist,df)
     legend('Robot','Dummy Runner')
 
     figure
-    plot(1:x-1,cell2mat(speed))
+    plot(1:x,s)
     title('Speed vs Time');
     xlabel('Time');
     ylabel('Speed');

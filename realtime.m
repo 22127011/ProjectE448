@@ -1,14 +1,28 @@
 %% Speed control (with elevation change) with functions
 
-load('matlab.mat'); % loads matlab sensor data
+load('marais.mat'); % loads matlab sensor data
 oldlat = Position.latitude;
 oldlong = Position.longitude; 
 alt = Position.altitude;
 course = Position.course;
 size = length(oldlat);
 fpc = 15; % frequency of pace change.
-x = 55; % completion time in x seconds. Modified by user
+x = 32; % completion time in x seconds. Modified by user
 play = true;
+
+fileID = fopen('route.txt','r');
+A = fscanf(fileID,['%f' ',' '%f']);
+fclose(fileID);
+
+latf = [];
+longf = [];
+for i = 1:length(A)
+    if (mod(i,2)==0)
+        longf = cat(1, longf, A(i));
+    else
+        latf = cat(1, latf, A(i));
+    end
+end
 
 %{
 [df1, nll, NewSize] = distanceIncr(oldlat,oldlong,alt,course,size);
@@ -20,7 +34,7 @@ size = NewSize;
 %} 
 % causes timing issues. runner avgspeed calc wrong 
 
-[df, distance_per_segment] = distanceIncr3(x,oldlat,oldlong,size,fpc); % not flat
+[df, distance_per_segment] = distanceIncr3(x,latf,longf,size,fpc); % not flat
 % df = df*df1(oldsize)/df(size);
 % distance_per_segment = distance_per_segment*df1(oldsize)/df(size);
 
@@ -52,6 +66,7 @@ time = 0;
 
 % choose array with longer time (to avoid index array bounds)
 % robot or human will continue running if the other has already reached the end of the route
+size = length(latf)
 size2 = length(dist);
 if size>size2
     sizemax = size;
@@ -63,7 +78,7 @@ step = 1;
 distance_to_travel = distance_per_segment(step);
 while(i<=sizemax && play==true)
     if i<size
-        plotPosition(player,oldlat(i),oldlong(i),"TrackID",1,"Marker","+","Label","Dummy");
+       % plotPosition(player,latf(i),longf(i),"TrackID",1,"Marker","+","Label","Dummy");
     end
 
     if i<=x-1
@@ -73,7 +88,7 @@ while(i<=sizemax && play==true)
             end
             i = i + 1;
             results = cat(1,results, [oldlat(k) oldlong(k)]); % coordinates at this time instance 
-            plotPosition(player,oldlat(k),oldlong(k),"TrackID",i,"Marker","*");
+           % plotPosition(player,oldlat(k),oldlong(k),"TrackID",i,"Marker","*");
             
             if dist(i) >= distance_to_travel 
                 distance_to_travel = distance_to_travel + distance_per_segment(step);
@@ -99,21 +114,40 @@ while(i<=sizemax && play==true)
                                                     % remove the one in if 
     else 
         i = i + 1;
-        plotPosition(player,oldlat(size),oldlong(size),"TrackID",i,"Marker","*","Label","RobotDone");
+        try
+            plotPosition(player,oldlat(size),oldlong(size),"TrackID",i,"Marker","*","Label","RobotDone");
+        catch
+            plotPosition(player,oldlat(length(oldlat)),oldlong(length(oldlat)),"TrackID",3,"Marker","*","Label","RobotDone");
+        end
         % waitfor(sampleTime); % turn this on
     end
 
     if i==x
+        try 
         new_alt = cat(1, new_alt, alt(size));
         results = cat(1,results, [oldlat(size) oldlong(size)]);
         plotPosition(player,oldlat(size),oldlong(size),"TrackID",i,"Marker","*","Label","RobotDone");
         speed{i} = speed_per_segment(step);
-        current_speed = speed_per_segment(step)
+        speed{i+1} = speed_per_segment(step);
+        current_speed = speed_per_segment(step);
         distanceRan = df(size)
         TimeElasped = sampleTime.TotalElapsedTime
         status = 'Run must have been completed already'
         completionTime = round(sampleTime.TotalElapsedTime);
         completionTime = completionTime + st % 1 second lost from (if i<=x-1)
+        catch 
+            new_alt = cat(1, new_alt, alt(length(alt)));
+            results = cat(1,results, [oldlat(length(alt)) oldlong(length(alt))]);
+            plotPosition(player,oldlat(length(alt)),oldlong(length(alt)),"TrackID",i,"Marker","*","Label","RobotDone");
+            speed{i} = speed_per_segment(step);
+            speed{i+1} = speed_per_segment(step);
+            current_speed = speed_per_segment(step)
+            distanceRan = df(length(alt))
+            TimeElasped = sampleTime.TotalElapsedTime
+            status = 'Run must have been completed already'
+            completionTime = round(sampleTime.TotalElapsedTime);
+            completionTime = completionTime + st % 1 second lost from (if i<=x-1)
+        end
     end
 end
 % hides route -> reset(player); 

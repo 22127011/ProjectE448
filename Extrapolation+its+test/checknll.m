@@ -1,4 +1,3 @@
-% for flat route
 function [df, dInc] = checknll(lat,long,size)
     R = 6371000;
     df = zeros(1);
@@ -19,6 +18,5 @@ function [df, dInc] = checknll(lat,long,size)
         
         df = cat(1, df, df(i-1) + d); % in meters
         dInc = cat(1, dInc, d);
-
      end 
 end

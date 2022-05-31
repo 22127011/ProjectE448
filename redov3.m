@@ -1,23 +1,23 @@
 %% Speed control (with elevation change) with functions
 
-load('matlab.mat'); % loads matlab sensor data
+load('marais.mat'); % loads matlab sensor data
 oldlat = Position.latitude;
 oldlong = Position.longitude; 
 alt = Position.altitude;
 course = Position.course;
 size = length(oldlat);
 fpc = 15; % frequency of pace change.
-x = 55; % completion time in x seconds. Modified by user
+x = 180; % completion time in x seconds. Modified by user
 play = true;
 
-%{
-[df1, nll, NewSize] = distanceIncr(oldlat,oldlong,alt,course,size);
-oldlat = nll(:,1);
-oldlong = nll(:,2);
-alt = nll(:,3);
-oldsize = size;
-size = NewSize;
-%} 
+% [df1, nll, NewSize] = distanceIncr(oldlat,oldlong,alt,course,size);
+% oldlat = nll(:,1);
+% oldlong = nll(:,2);
+% alt = nll(:,3);
+% oldsize = size;
+% size = NewSize;
+
+ 
 % causes timing issues. runner avgspeed calc wrong 
 
 [df, distance_per_segment] = distanceIncr3(x,oldlat,oldlong,size,fpc); % not flat
@@ -91,7 +91,7 @@ while(i<=sizemax && play==true)
             else 
                 status = 'You are on pace or ahead'
             end
-            % waitfor(sampleTime); % wait for 1 second
+            waitfor(sampleTime); % wait for 1 second
         else
             k = k + 1; % final time is almost x; this line takes 0.3 ms to execute
         end
@@ -112,10 +112,9 @@ while(i<=sizemax && play==true)
         distanceRan = df(size)
         TimeElasped = sampleTime.TotalElapsedTime
         status = 'Run must have been completed already'
-        completionTime = round(sampleTime.TotalElapsedTime);
-        completionTime = completionTime + st % 1 second lost from (if i<=x-1)
     end
 end
+completionTime = round(TimeElasped) + 1
 % hides route -> reset(player); 
 % hide(player); % closes visualizer
 

@@ -8,10 +8,8 @@ function newspeed = segmentTimes(avgspeed, alt, fpc, dps, tdt)
         step = i; % the end point (index) of recorded elevation
       end
     end
-    if mod(i,fpc)==0
-       % do nothing
-    else 
-        elevation = cat(1,elevation,alt(size,1)-alt(step,1));
+    if mod(i,fpc)~=0
+       elevation = cat(1,elevation,alt(size,1)-alt(step,1));
     end
     
     newspeed = [];

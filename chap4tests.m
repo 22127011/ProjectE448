@@ -17,7 +17,6 @@ for i = 1:size
 end
 sd = sd*(sqrt(ud)/sqrt(size));
 
-
 figure
 errorbar(0:size-1,alt,sd)
 title('Altitude test');

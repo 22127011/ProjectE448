@@ -66,7 +66,7 @@ time = 0;
 
 % choose array with longer time (to avoid index array bounds)
 % robot or human will continue running if the other has already reached the end of the route
-size = length(latf)
+size = length(latf);
 size2 = length(dist);
 if size>size2
     sizemax = size;

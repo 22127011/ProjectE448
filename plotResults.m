@@ -20,7 +20,7 @@ function plotResults(results,x,speed,avgspeed,alt,new_alt,dist,df)
     
     figure
     %label = {};
-    for i = 1:x
+    for i = 1:x-1
         % label{i} = i-1;
         if (i>=length(df))
             df = cat(1,df,df(length(df)));
@@ -53,7 +53,7 @@ function plotResults(results,x,speed,avgspeed,alt,new_alt,dist,df)
     xlabel('Time');
     ylabel('Altitude');
     hold on
-    plot(1:length(alt),alt(1:length(alt))); % Runner
+    plot(1:length(alt),alt); % Runner
     hold off
     legend('Robot','Dummy Runner')
 
@@ -68,7 +68,7 @@ function plotResults(results,x,speed,avgspeed,alt,new_alt,dist,df)
     legend('Robot','Dummy Runner')
 
     figure
-    plot(1:x,s)
+    plot(1:x-1,s)
     title('Speed vs Time');
     xlabel('Time');
     ylabel('Speed');

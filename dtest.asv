@@ -1,0 +1,27 @@
+load('dt3.mat');
+lat = Position.latitude;
+long = Position.longitude; 
+
+player = geoplayer(lat(1),long(1),21);
+player.Parent.Name = 'Runner vs robot';
+player.Basemap = 'streets'; 
+plotRoute(player,lat,long,"Color","cyan");
+
+figure
+scatter(lat(5),long(5));
+hold on;
+scatter(lat(50),long(50));
+
+load('dt5.mat');
+lat = Position.latitude;
+long = Position.longitude;
+plotRoute(player,lat,long,"Color","black");
+
+scatter(lat(5),long(5));
+scatter(lat(25),long(25));
+
+title('Latitude and Longitude coordinates for each time instance');
+xlabel('Longitude');
+ylabel('Latitude');
+legend('start1', 'star2', 'end1', 'end2');
+

@@ -1,26 +1,24 @@
 %% Speed control (with elevation change) with functions
 
-load('marais.mat'); % loads matlab sensor data
+load('set16el.mat'); % loads matlab sensor data
 oldlat = Position.latitude;
 oldlong = Position.longitude; 
 alt = Position.altitude;
 course = Position.course;
 size = length(oldlat);
-fpc = 15; % frequency of pace change.
+fpc = 60; % frequency of pace change.
 x = 180; % completion time in x seconds. Modified by user
 play = true;
 
-% [df1, nll, NewSize] = distanceIncr(oldlat,oldlong,alt,course,size);
-% oldlat = nll(:,1);
-% oldlong = nll(:,2);
-% alt = nll(:,3);
-% oldsize = size;
-% size = NewSize;
-
- 
+[df1, nll, NewSize] = distanceIncr(oldlat,oldlong,alt,size);
+oldlat = nll(:,1);
+oldlong = nll(:,2);
+alt = nll(:,3);
+oldsize = size;
+size = NewSize;
 % causes timing issues. runner avgspeed calc wrong 
 
-[df, distance_per_segment] = distanceIncr3(x,oldlat,oldlong,size,fpc); % not flat
+[df, distance_per_segment] = distanceIncr3(oldlat,oldlong,size,fpc); 
 % df = df*df1(oldsize)/df(size);
 % distance_per_segment = distance_per_segment*df1(oldsize)/df(size);
 
@@ -66,12 +64,9 @@ while(i<=sizemax && play==true)
         plotPosition(player,oldlat(i),oldlong(i),"TrackID",1,"Marker","+","Label","Dummy");
     end
 
-    if i<=x-1
+    if i<=x
         if dist(i) <= df(k)
-            if i<=size
-                new_alt = cat(1, new_alt, alt(k));
-            end
-            i = i + 1;
+            new_alt = cat(1, new_alt, alt(k));
             results = cat(1,results, [oldlat(k) oldlong(k)]); % coordinates at this time instance 
             plotPosition(player,oldlat(k),oldlong(k),"TrackID",i,"Marker","*");
             
@@ -81,17 +76,19 @@ while(i<=sizemax && play==true)
             end
             
             speed{i} = speed_per_segment(step);
-            
             current_speed = speed_per_segment(step)
             distanceRan = dist(i)
             TimeElasped = sampleTime.TotalElapsedTime % the one in if 
             time = time + 1
+
             if k>i 
                 status = 'You are behind'
             else 
                 status = 'You are on pace or ahead'
             end
-            waitfor(sampleTime); % wait for 1 second
+
+            i = i + 1;
+            % waitfor(sampleTime); % wait for 1 second
         else
             k = k + 1; % final time is almost x; this line takes 0.3 ms to execute
         end
@@ -103,7 +100,7 @@ while(i<=sizemax && play==true)
         % waitfor(sampleTime); % turn this on
     end
 
-    if i==x
+    if i==x+1
         new_alt = cat(1, new_alt, alt(size));
         results = cat(1,results, [oldlat(size) oldlong(size)]);
         plotPosition(player,oldlat(size),oldlong(size),"TrackID",i,"Marker","*","Label","RobotDone");

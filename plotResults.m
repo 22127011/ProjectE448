@@ -37,7 +37,7 @@ function plotResults(results,x,speed,avgspeed,alt,new_alt,dist,df)
         else 
             c = 'red';
         end
-        scatter( results(i,1) , results(i,2),c,"filled" )
+        scatter( results(i,2), results(i,1) , c ,"filled" )
         hold on;
     end
     %text(results(:,1),results(:,2),label,'VerticalAlignment','bottom','HorizontalAlignment','left');
@@ -58,17 +58,17 @@ function plotResults(results,x,speed,avgspeed,alt,new_alt,dist,df)
     legend('Robot','Dummy Runner')
 
     figure
-    plot(0:x,dist)
+    plot(0:x-1,dist(1:x))
     title('Distance vs Time');
     xlabel('Time');
     ylabel('Distance travelled'); % Robot
     hold on
-    plot(0:x,df(1:x+1)) % Runner
+    plot(0:x-1,df(1:x)) % Runner
     hold off
     legend('Robot','Dummy Runner')
 
     figure
-    plot(1:x-1,s)
+    plot(1:x-1,s(1:x-1))
     title('Speed vs Time');
     xlabel('Time');
     ylabel('Speed');

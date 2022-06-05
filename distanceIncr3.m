@@ -1,11 +1,9 @@
 % for route with elevation
-function [df, distance_per_segment] = distanceIncr3(x,lat,long,size,fpc)
+function [df, distance_per_segment] = distanceIncr3(lat,long,size,fpc)
     R = 6371000;
-    % divisor = size/fpc
     step = 1;
     distance_per_segment = [];
     df = zeros(1);
-    distancec = zeros(1);
     for i=2:1:size
         a11 = (lat(i)-lat(i-1))*pi/180;
         a41 = (long(i)-long(i-1))*pi/180;
@@ -26,8 +24,7 @@ function [df, distance_per_segment] = distanceIncr3(x,lat,long,size,fpc)
            step = i; % the end point (index) of recorded elevation
         end
     end
-        
-    for i=2:1:x+1
-        distancec = cat(1,distancec,distancec(i-1)+df(size)/x);
+    if mod(i,fpc)~=0
+       distance_per_segment = cat(1,distance_per_segment,df(size)-df(step));
     end
 end

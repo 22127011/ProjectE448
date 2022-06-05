@@ -12,7 +12,7 @@ alt = Position.altitude;
 course = Position.course;
 size = length(lat);
 
-[df, dInc, nll, new_alt] = distanceIncr(lat,long,alt,course,size);
+[df, dInc, nll, new_alt] = distanceIncr(lat,long,alt,size);
 [newdf, newdInc] = checknll(nll(:,1),nll(:,2),length(nll(:,1)));
 
 plot(1:length(alt),alt);

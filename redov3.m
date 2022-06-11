@@ -1,13 +1,13 @@
 %% Speed control (with elevation change) with functions
 
-load('set16el.mat'); % loads matlab sensor data
+load('marais.mat'); % loads matlab sensor data
 oldlat = Position.latitude;
 oldlong = Position.longitude; 
 alt = Position.altitude;
 course = Position.course;
 size = length(oldlat);
-fpc = 60; % frequency of pace change.
-x = 180; % completion time in x seconds. Modified by user
+fpc = 100; % frequency of pace change. Modified by user
+x = 33; % completion time in x seconds. Modified by user
 play = true;
 
 [df1, nll, NewSize] = distanceIncr(oldlat,oldlong,alt,size);
@@ -64,7 +64,7 @@ while(i<=sizemax && play==true)
         plotPosition(player,oldlat(i),oldlong(i),"TrackID",1,"Marker","+","Label","Dummy");
     end
 
-    if i<=x
+    if i<x+1
         if dist(i) <= df(k)
             new_alt = cat(1, new_alt, alt(k));
             results = cat(1,results, [oldlat(k) oldlong(k)]); % coordinates at this time instance 
@@ -111,12 +111,18 @@ while(i<=sizemax && play==true)
         status = 'Run must have been completed already'
     end
 end
-completionTime = round(TimeElasped) + 1
+completionTime = round(TimeElasped)
+
+fileID = fopen('robot.txt','w');
+fprintf(fileID,'%3.7f,%3.7f\n',[transpose(results(:,1)) ; transpose(results(:,2))]);
+fclose(fileID);
+
+'robot.txt updated'
 % hides route -> reset(player); 
 % hide(player); % closes visualizer
 
-if play==true
-    plotResults(results,x,speed,avgspeed,alt,new_alt,dist,df);
-else 
-    plotResultsf(x,size,alt,dist);
-end
+% if play==true
+%     plotResults(results,x,speed,avgspeed,alt,new_alt,dist,df);
+% else 
+%     plotResultsf(x,size,alt,dist);
+% end

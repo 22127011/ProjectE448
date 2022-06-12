@@ -16,6 +16,8 @@ function plotResults(results,x,speed,hrspeed,avgspeed,alt,new_alt,dist,df)
     fprintf(fileID,'%3.7f,%3.7f\n',[transpose(results(:,1)) ; transpose(results(:,2))]);
     fclose(fileID);
     
+    size = length(results(:,1));
+
     s = cell2mat(speed);
     vrraspeed = [];
     i = 1;
@@ -46,37 +48,40 @@ function plotResults(results,x,speed,hrspeed,avgspeed,alt,new_alt,dist,df)
         hold on;
     end
     %text(results(:,1),results(:,2),label,'VerticalAlignment','bottom','HorizontalAlignment','left');
-    title('Latitude and Longitude coordinates for each time instance');
-    xlabel('Longitude (degrees)');
-    ylabel('Latitude (degrees)');
+    title('Route and VRP indicators along route', FontSize=16);
+    xlabel('Longitude (°)',FontSize=12);
+    ylabel('Latitude (°)',FontSize=12);
+    text(results(1,2),results(1,1),'START',FontSize=10);
+    text(results(size,2),results(size,1),'END',FontSize=10);
+    axis('equal');
     % legend('behind', 'ahead', 'on pace');
     hold off;
 
     figure
     plot(1:length(new_alt),new_alt) % Robot
-    title('Altitude vs Time');
-    xlabel('Time (s)');
-    ylabel('Altitude (m)');
+    title('Altitude vs Time', FontSize=16);
+    xlabel('Time (s)', FontSize=12);
+    ylabel('Altitude (m)',FontSize=12);
     hold on
     plot(1:length(alt),alt); % Runner
     hold off
-    legend('Virtual Runner','Human Runner')
+    legend('Virtual Runner','Human Runner',FontSize=10)
 
     figure
     plot(0:x,dist(1:x+1))
-    title('Distance vs Time');
-    xlabel('Time (s)');
-    ylabel('Distance travelled (m)'); % Robot
+    title('Distance vs Time', FontSize=16);
+    xlabel('Time (s)',FontSize=12);
+    ylabel('Distance travelled (m)',FontSize=12); % Robot
     hold on
     plot(0:x,df(1:x+1)) % Runner
     hold off
-    legend('Virtual Runner','Human Runner');
+    legend('Virtual Runner','Human Runner',FontSize=10);
 
     figure
     plot(1:x,s(1:x)) % Virtual Runner Speed
-    title('Speed vs Time');
-    xlabel('Time (s)');
-    ylabel('Speed (m/s)');
+    title('Speed vs Time', FontSize=16);
+    xlabel('Time (s)',FontSize=12);
+    ylabel('Speed (m/s)',FontSize=12);
     hold on
     plot(1:x,vrraspeed(1:x)) % Virtual Runner Average Speed
     speedr = [];
@@ -86,5 +91,5 @@ function plotResults(results,x,speed,hrspeed,avgspeed,alt,new_alt,dist,df)
     plot(1:length(hrspeed),hrspeed(1:length(hrspeed))) % Human Runner Rolling Average Speed
     plot(1:x,speedr) % Human Runner Average Speed
     hold off
-    legend('Virtual Runner Speed','Virtual Runner Average Speed','Human Runner Rolling Average Speed','Human Runner Average Speed');
+    legend('Virtual Runner Speed','Virtual Runner Average Speed','Human Runner Rolling Average Speed','Human Runner Average Speed',FontSize=10);
 end

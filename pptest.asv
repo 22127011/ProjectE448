@@ -1,13 +1,13 @@
 %% Speed control (with elevation change) with functions
 
-load('loop.mat'); % loads matlab sensor data
+load('set12el.mat'); % loads matlab sensor data
 oldlat = Position.latitude;
 oldlong = Position.longitude; 
 alt = Position.altitude;
 course = Position.course;
 size = length(oldlat);
 fpc = 100; % frequency of pace change. Modified by user
-x = 300; % completion time in x seconds. Modified by user
+x = 180; % completion time in x seconds. Modified by user
 play = true;
 
 [df1, nll, NewSize] = distanceIncr(oldlat,oldlong,alt,size);
@@ -59,12 +59,7 @@ end
 
 step = 1;
 distance_to_travel = distance_per_segment(step);
-while(i<=x+1)
-% while(i<=sizemax && play==true)
-%     if i<size
-%         plotPosition(player,oldlat(i),oldlong(i),"TrackID",1,"Marker","+","Label","Dummy");
-%     end
-
+while(i<x+1 && play==true)
     if i<x+1
         if dist(i) <= df(k)
             new_alt = cat(1, new_alt, alt(k));
@@ -114,13 +109,89 @@ while(i<=x+1)
 end
 completionTime = round(TimeElasped)
 
-fileID = fopen('robot.txt','w');
-fprintf(fileID,'%3.7f,%3.7f\n',[transpose(results(:,1)) ; transpose(results(:,2))]);
-fclose(fileID);
-
 'robot.txt updated'
-% hides route -> reset(player); 
-% hide(player); % closes visualizer
-%% Plots
-% plotResults(results,x,speed,avgspeed,alt,new_alt,dist,df);
+
+%% Pace planner test
+figure
+hold on;
+step = 1;
+track = 1;
+distance_to_travel = distance_per_segment(step);
+for i=1:length(nll(:,1))
+    if df(i) >= distance_to_travel 
+         distance_to_travel = distance_to_travel + distance_per_segment(step);
+         plot(nll(track:i,2),nll(track:i,1));
+         track = i;
+         step = step + 1; 
+    end
+end
+plot(nll(track:length(nll(:,1)),2),nll(track:length(nll(:,1)),1));
+axis('equal');
+title('Segmented route', 'FontSize', 16);
+xlabel('Longitude (°)', 'FontSize', 12);
+ylabel('Latitude (°)', 'FontSize', 12);
+text(nll(1,2),nll(1,1),'START',FontSize=10);
+text(nll(953,2),nll(953,1),'END',FontSize=10);
+hold off;
+
+figure
+hold on;
+step = 1;
+track = 1;
+distance_to_travel = distance_per_segment(step);
+for i=1:length(nll(:,1))
+    if df(i) >= distance_to_travel 
+         distance_to_travel = distance_to_travel + distance_per_segment(step);
+         plot(df(track:i),alt(track:i));
+         track = i;
+         step = step + 1; 
+    end
+end
+plot(df(track:length(nll(:,1))),alt(track:length(nll(:,1))));
+title('Elevation vs Distance', 'FontSize', 16);
+xlabel('Distance (m)', 'FontSize', 12);
+ylabel('Elevation (m)', 'FontSize', 12);
+hold off;
+
+s = cell2mat(speed);
+figure
+hold on;
+step = 1;
+track = 1;
+distance_to_travel = distance_per_segment(step);
+for i=1:x+1
+    if dist(i) >= distance_to_travel 
+         distance_to_travel = distance_to_travel + distance_per_segment(step);
+         plot(dist(track:i),s(track:i));
+         track = i;
+         step = step + 1; 
+    end
+end
+plot(dist(track:x+1),s(track:x+1));
+avga = one(length(nl),1);
+avga = avga*avgspeed;
+plot(0:x,avga);
+title('Speed vs Distance', 'FontSize', 16);
+xlabel('Distance (m)', 'FontSize', 12);
+ylabel('Speed (m)', 'FontSize', 12);
+hold off;
+
+figure
+hold on;
+step = 1;
+track = 1;
+distance_to_travel = distance_per_segment(step);
+for i=1:x+1
+    if dist(i) >= distance_to_travel 
+         distance_to_travel = distance_to_travel + distance_per_segment(step);
+         plot(track-1:i-1,dist(track:i));
+         track = i;
+         step = step + 1; 
+    end
+end
+plot(track-1:x,dist(track:x+1));
+title('Distance vs Time', 'FontSize', 16);
+ylabel('Distance (m)', 'FontSize', 12);
+xlabel('Time (s)', 'FontSize', 12);
+hold off;
 

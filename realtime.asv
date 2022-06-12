@@ -12,7 +12,7 @@ x = 33; % completion time in x seconds. Modified by user
 play = true;
 
 %% Runner location
-fileID = fopen('route33fcp100.txt','r');
+fileID = fopen('route33fcp100_2.txt','r');
 A = fscanf(fileID,['%f' ',' '%f']);
 fclose(fileID);
 
@@ -111,6 +111,7 @@ end
 
 %% Runner distance calculation
 [rdf] = distanceIncr4(latf,longf,size,dist(x+1));
+rdf = rdf*1.02
 avgspeed = rdf(x)/(x-1);
 hrspeed = [];
 altf = [alt(1)];
@@ -122,12 +123,13 @@ while(i<x+1)
         hrspeed = cat(1, hrspeed, rdf(i+1)/i);
         i = i + 1;
     else
-        k = k + 1;
+        k = k + 1; 
+        if k > length(alt)
+            break;
+        end
     end
 end 
 
-if play==true
-    plotResults(results,x,speed,hrspeed,avgspeed,altf,new_alt,dist,rdf);
-else 
-    plotResultsf(x,size,alt,dist);
-end
+%% Plots
+plotResults(results,x,speed,hrspeed,avgspeed,altf,new_alt,dist,rdf);
+

@@ -1,23 +1,5 @@
-function plotResults(results,x,speed,hrspeed,avgspeed,alt,new_alt,dist,df)
-    %{
-    scatter( results(:,1) , results(:,2) , [] , linspace(results(1,2),results(length(results(:,2)),2),x) ,"filled" )
-    label = {};
-    for i = 1:x
-        % label{i} = 'Time: ' + string(i) + 's, ' + 'Speed: ' + string(speed{i});
-        label{i} = i-1;
-    end
-    text(results(:,1),results(:,2),label,'VerticalAlignment','baseline','HorizontalAlignment','left');
-    title('Latitude and Longitude coordinates for each time instance');
-    xlabel('Longitude');
-    ylabel('Latitude');
-    %}
-
-    fileID = fopen('robot.txt','w');
-    fprintf(fileID,'%3.7f,%3.7f\n',[transpose(results(:,1)) ; transpose(results(:,2))]);
-    fclose(fileID);
-    
+function plotResults(results,x,speed,hrspeed,avgspeed,alt,new_alt,dist,df)       
     size = length(results(:,1));
-
     s = cell2mat(speed);
     vrraspeed = [];
     i = 1;
@@ -27,9 +9,7 @@ function plotResults(results,x,speed,hrspeed,avgspeed,alt,new_alt,dist,df)
     end
 
     figure
-    %label = {};
     for i = 1:x
-        % label{i} = i-1;
         if (i>=length(df))
             df = cat(1,df,df(length(df)));
         end
@@ -39,7 +19,7 @@ function plotResults(results,x,speed,hrspeed,avgspeed,alt,new_alt,dist,df)
 
         if ((df(i)-dist(i))>=-(s(i)) && (df(i)-dist(i))<=(s(i)))
             c = 'yellow'; 
-        elseif ((df(i)-dist(i))>(s(i))) % 1 being the resolution
+        elseif ((df(i)-dist(i))>(s(i))) 
             c = 'green';
         else 
             c = 'red';
@@ -47,7 +27,6 @@ function plotResults(results,x,speed,hrspeed,avgspeed,alt,new_alt,dist,df)
         scatter( results(i,2), results(i,1) , c ,"filled" )
         hold on;
     end
-    %text(results(:,1),results(:,2),label,'VerticalAlignment','bottom','HorizontalAlignment','left');
     title('Route and VRP indicators along route', FontSize=16);
     xlabel('Longitude (°)',FontSize=12);
     ylabel('Latitude (°)',FontSize=12);

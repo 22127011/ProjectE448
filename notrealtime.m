@@ -1,13 +1,13 @@
 %% Speed control (with elevation change) with functions
 
-load('set16el.mat'); % loads matlab sensor data
+load('marais.mat'); % loads matlab sensor data
 oldlat = Position.latitude;
 oldlong = Position.longitude; 
 alt = Position.altitude;
 course = Position.course;
 size = length(oldlat);
 fpc = 100; % frequency of pace change. Modified by user
-x = 260; % completion time in x seconds. Modified by user
+x = 33; % completion time in x seconds. Modified by user
 play = true;
 
 [df1, nll, NewSize] = distanceIncr(oldlat,oldlong,alt,size);
@@ -16,12 +16,9 @@ oldlong = nll(:,2);
 alt = nll(:,3);
 oldsize = size;
 size = NewSize;
-% causes timing issues. runner avgspeed calc wrong 
 
+%% Pace Planner
 [df, distance_per_segment] = distanceIncr3(oldlat,oldlong,size,fpc); 
-% df = df*df1(oldsize)/df(size);
-% distance_per_segment = distance_per_segment*df1(oldsize)/df(size);
-
 avgspeed = df(size)/x;
 speed_per_segment = segmentTimes(avgspeed, alt, fpc, distance_per_segment,df(size));
 dist = diste2(x,speed_per_segment,distance_per_segment,df,size);
@@ -32,8 +29,7 @@ catch
     warning('is_possible not working')
 end
 
-% plot 
-% myPlot(df,x,lat,long,1,dist,size);
+%% Virtual Runner Setup
 st = 1; 
 player = geoplayer(oldlat(1),oldlong(1),18);
 player.Parent.Name = 'Runner vs robot';
@@ -59,11 +55,10 @@ end
 
 step = 1;
 distance_to_travel = distance_per_segment(step);
-while(i<=x+1)
-% while(i<=sizemax && play==true)
-%     if i<size
-%         plotPosition(player,oldlat(i),oldlong(i),"TrackID",1,"Marker","+","Label","Dummy");
-%     end
+while(i<=sizemax && play==true)
+    if i<size
+        plotPosition(player,oldlat(i),oldlong(i),"TrackID",1,"Marker","+","Label","Dummy");
+    end
 
     if i<x+1
         if dist(i) <= df(k)
@@ -73,7 +68,7 @@ while(i<=x+1)
             
             if dist(i) >= distance_to_travel 
                 distance_to_travel = distance_to_travel + distance_per_segment(step);
-                step = step + 1; % possibly must come before previous line
+                step = step + 1; 
             end
             
             speed{i} = speed_per_segment(step);
@@ -89,7 +84,7 @@ while(i<=x+1)
             end
 
             i = i + 1;
-            % waitfor(sampleTime); % wait for 1 second
+            waitfor(sampleTime); % wait for 1 second
         else
             k = k + 1; % final time is almost x; this line takes 0.3 ms to execute
         end
@@ -98,7 +93,6 @@ while(i<=x+1)
     else 
         i = i + 1;
         plotPosition(player,oldlat(size),oldlong(size),"TrackID",i,"Marker","*","Label","RobotDone");
-        % waitfor(sampleTime); % turn this on
     end
 
     if i==x+1
@@ -119,8 +113,4 @@ fprintf(fileID,'%3.7f,%3.7f\n',[transpose(results(:,1)) ; transpose(results(:,2)
 fclose(fileID);
 
 'robot.txt updated'
-% hides route -> reset(player); 
-% hide(player); % closes visualizer
-%% Plots
-% plotResults(results,x,speed,avgspeed,alt,new_alt,dist,df);
 

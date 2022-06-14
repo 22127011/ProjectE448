@@ -1,18 +1,18 @@
 %% Speed control (with elevation change) with functions
 
 %% Route map
-load('set16el.mat'); % loads matlab sensor data
+load('marais.mat'); % loads matlab sensor data
 oldlat = Position.latitude;
 oldlong = Position.longitude; 
 alt = Position.altitude;
 course = Position.course;
 size = length(oldlat);
 fpc = 100; % frequency of pace change.
-x = 260; % completion time in x seconds. Modified by user
+x = 33; % completion time in x seconds. Modified by user
 play = true;
 
 %% Runner location
-fileID = fopen('route260fcp100.txt','r');
+fileID = fopen('route33fcp100.txt','r');
 A = fscanf(fileID,['%f' ',' '%f']);
 fclose(fileID);
 
@@ -86,7 +86,7 @@ while(i<=sizemax && play==true)
             
             if dist(i) >= distance_to_travel 
                 distance_to_travel = distance_to_travel + distance_per_segment(step);
-                step = step + 1; % possibly must come before previous line
+                step = step + 1; 
             end
             
             speed{i} = speed_per_segment(step);
@@ -96,7 +96,7 @@ while(i<=sizemax && play==true)
             time = time + 1
 
             i = i + 1;
-            % waitfor(sampleTime);
+            waitfor(sampleTime);
         else 
             k = k + 1;
         end
@@ -106,8 +106,6 @@ while(i<=sizemax && play==true)
       % waitfor(sampleTime);
     end
 end
-% hides route -> reset(player); 
-% hide(player); % closes visualizer
 
 %% Runner distance calculation
 [rdf] = distanceIncr4(latf,longf,size,dist(x+1));

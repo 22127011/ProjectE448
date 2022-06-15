@@ -20,7 +20,7 @@ function newspeed = segmentTimes(avgspeed, alt, fpc, dps, tdt)
         end
     else
         elevation = elevation/televation; % gets the % elevation contribution of each segment
-        elevation = avgspeed/(1+elevation); % assigns speed each segment
+        elevation = avgspeed/(1-elevation); % assigns speed each segment
         newspeed = tdt/new_completion_time(dps, elevation); % new average speed
         ratio = avgspeed/newspeed; % ratio (expansion or compression of average speed)
         newspeed = ratio*elevation; % adjusted average speed for each segment

@@ -1,4 +1,4 @@
-%% Speed control (with elevation change) with functions
+%% Pace Planner test
 
 load('set12el.mat'); % loads matlab sensor data
 oldlat = Position.latitude;

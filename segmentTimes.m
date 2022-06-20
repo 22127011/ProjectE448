@@ -1,3 +1,4 @@
+%% get elevatiions
 function newspeed = segmentTimes(avgspeed, alt, fpc, dps, tdt) 
     size = length(alt);
     elevation = [];
@@ -12,15 +13,18 @@ function newspeed = segmentTimes(avgspeed, alt, fpc, dps, tdt)
        elevation = cat(1,elevation,alt(size,1)-alt(step,1));
     end
     
+    %% get contributions
     newspeed = [];
     televation = sum(abs(elevation),'all'); % total elevation
+
+    %% assign speed
     if televation==0
         for i=1:length(elevation)
             newspeed(i) = avgspeed;
         end
     else
         elevation = elevation/televation; % gets the % elevation contribution of each segment
-        elevation = avgspeed*(1-elevation); % assigns speed each segment
+        elevation = avgspeed./(1+elevation); % assigns speed on each segment
         newspeed = tdt/new_completion_time(dps, elevation); % new route average speed
         ratio = avgspeed/newspeed; % ratio (expansion or compression of average speed)
         newspeed = ratio*elevation; % adjusted average speed for each segment
